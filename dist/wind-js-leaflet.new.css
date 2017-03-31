@@ -10,11 +10,3 @@
   position: absolute;
   z-index: 1;
 }
-
-.leaflet-layer-hide {
-    opacity: 0;
-}
-
-.leaflet-layer-fade {
-    transition: opacity 4.2s ease-in-out;
-}
