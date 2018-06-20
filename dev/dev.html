@@ -1,0 +1,68 @@
+<!-- https://github.com/danwild/leaflet-velocity -->
+
+<!doctype html>
+<html>
+<head>
+    <title>LeafletVelocity Demo</title>
+    <meta charset="utf-8">
+</head>
+<body>
+
+<div id="map" style="width:600px;height:500px;background:black"></div>
+
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<link rel="stylesheet" href="https://npmcdn.com/leaflet@1.3.0/dist/leaflet.css" />
+<script src="https://npmcdn.com/leaflet@1.3.0/dist/leaflet.js"></script>
+
+<link rel="stylesheet" href="../src/css/leaflet-velocity.css" />
+<script src="../src/js/windy.js"></script>
+<script src="../src/js/L.CanvasLayer.js"></script>
+<script src="../src/js/L.Control.Velocity.js"></script>
+<script src="../src/js/L.VelocityLayer.js"></script>
+<script src="../src/js/windy-worker.js"></script>
+
+<script>
+var map = L.map('map', {
+});
+map.setView([7.5, 120.5], 9);
+
+var velocityLayer = L.velocityLayer({
+        displayValues: true,
+        displayOptions: {
+            velocityType: 'GBR Wind',
+            displayPosition: 'bottomleft',
+            displayEmptyString: 'No wind data'
+        },
+        velocityScale: 0.5,
+        particleMultiplier: 0.0001
+    });
+map.addLayer(velocityLayer);
+
+
+// load data (u, v grids) from somewhere (e.g. https://github.com/danwild/wind-js-server)
+$.getJSON('wind-gbr.json', function (data) {
+
+    velocityLayer.setData(data);
+});
+
+
+// setTimeout(function() {
+// $.getJSON('wind-2.json', function (data) {
+
+//     velocityLayer.setData(data);
+//     velocityLayer._startWindy();
+
+// });
+// }, 1000);
+
+
+var cc = function(data) {
+    console.log("back >>", data)
+}
+
+WindyDataProxy.getData("wind-2.json", cc)
+
+</script>
+
+</body>
+</html>

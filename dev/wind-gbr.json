@@ -1,0 +1,44 @@
+[
+  {
+    "header": {
+      "parameterUnit": "m.s-1",
+      "parameterNumber": 2,
+      "dx": 1.0,
+      "dy": 1.0,
+      "parameterNumberName": "eastward_wind",
+      "la1": 8,
+      "parameterCategory": 2,
+      "nx": 2,
+      "ny": 2,
+      "refTime": "2017-02-01 23:00:00",
+      "lo1": 120.0
+    },
+    "data": [
+      3,
+      4,
+      3,
+      4
+    ]
+  },
+  {
+    "header": {
+      "parameterUnit": "m.s-1",
+      "parameterNumber": 3,
+      "dx": 1.0,
+      "dy": 1.0,
+      "parameterNumberName": "northward_wind",
+      "lo1": 120.0,
+      "la1": 8,
+      "parameterCategory": 2,
+      "nx": 2,
+      "ny": 2,
+      "refTime": "2017-02-01 23:00:00"
+    },
+    "data": [
+      3,
+      1,
+      3,
+      1
+  ]
+  }
+]

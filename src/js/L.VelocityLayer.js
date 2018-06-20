@@ -63,7 +63,7 @@ L.VelocityLayer = (L.Layer ? L.Layer : L.Class).extend({
 
 		this._timer = setTimeout(function () {
 			self._startWindy();
-		}, 750); // showing velocity is delayed
+		}, 50); // showing velocity is delayed
 	},
 
 	_startWindy: function() {
@@ -87,29 +87,29 @@ L.VelocityLayer = (L.Layer ? L.Layer : L.Class).extend({
 	_initWindy: function(self) {
 
 		// windy object, copy options
-		const options = Object.assign({ canvas: self._canvasLayer._canvas }, self.options);
+		const options = Object.assign({ canvas: self._canvasLayer.canvas }, self.options);
 		this._windy = new Windy(options);
 
 		// prepare context global var, start drawing
-		this._context = this._canvasLayer._canvas.getContext('2d');
-		this._canvasLayer._canvas.classList.add("velocity-overlay");
+		this._context = this._canvasLayer.canvas.getContext('2d');
+		this._canvasLayer.canvas.classList.add("velocity-overlay");
 		this.onDrawLayer();
 
-		this._map.on('dragstart', self._windy.stop);
-		this._map.on('dragend', self._clearAndRestart);
-		this._map.on('zoomstart', self._windy.stop);
-		this._map.on('zoomend', self._clearAndRestart);
-		this._map.on('resize', self._clearWind);
+		// this._map.on('dragstart', self._windy.stop);
+		// this._map.on('dragend', self._clearAndRestart);
+		// this._map.on('zoomstart', self._windy.stop);
+		// this._map.on('zoomend', self._clearAndRestart);
+		// this._map.on('resize', self._clearWind);
 
-		this._initMouseHandler();
+		// this._initMouseHandler();
 	},
 
 	_initMouseHandler: function() {
-		if (!this._mouseControl && this.options.displayValues) {
-			var options = this.options.displayOptions || {};
-			options['leafletVelocity'] = this;
-			this._mouseControl = L.control.velocity(options).addTo(this._map);
-		}
+		// if (!this._mouseControl && this.options.displayValues) {
+		// 	var options = this.options.displayOptions || {};
+		// 	options['leafletVelocity'] = this;
+		// 	this._mouseControl = L.control.velocity(options).addTo(this._map);
+		// }
 	},
 
 	_clearAndRestart: function(){

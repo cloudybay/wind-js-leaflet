@@ -1,0 +1,94 @@
+<!-- https://github.com/danwild/leaflet-velocity -->
+
+<!doctype html>
+<html>
+<head>
+    <title>LeafletVelocity Demo</title>
+    <meta charset="utf-8">
+</head>
+<body style="background:black">
+
+<canvas id="map" width="600" height="500"></canvas>
+
+<script src="../src/js/mdmv-worker.js"></script>
+<script src="../src/js/windy6.js"></script>
+
+<script>
+var cas = document.getElementById("map");
+
+var windy = new Windy(
+    cas,
+    [[0,0,], [600, 500]],
+    600, 500,
+    [
+        [119.67681884765626, 6.817352822622144],
+        [121.32476806640626, 8.178867909130346],
+    ],
+    {
+      velocityScale: 0.05,
+      particleMultiplier: 1/30000,
+      worker_uri: "../src/js/mdmv-worker.js"
+    }
+);
+
+windy.setData({
+    header:{
+      "dx": 1.0,
+      "dy": 1.0,
+      "lo1": 120.0,
+      "la1": 8,
+      "nx": 2,
+      "ny": 2,
+    },
+    data:[
+      [3,4,3,4],
+      [3,1,3,1]
+    ]
+});
+
+windy.start();
+
+
+// setTimeout(function() {
+//   windy.stop()
+// }, 1000);
+
+setTimeout(function() {
+  windy.setData({
+      header:{
+        "dx": 1.0,
+        "dy": 1.0,
+        "lo1": 120.0,
+        "la1": 8,
+        "nx": 2,
+        "ny": 2,
+      },
+      data:[
+        [3,3,3,3],
+        [2,0,2,0]
+      ]
+  });
+}, 2000);
+
+
+setTimeout(function() {
+  windy.setData({
+      header:{
+        "dx": 1.0,
+        "dy": 1.0,
+        "lo1": 120.0,
+        "la1": 8,
+        "nx": 2,
+        "ny": 2,
+      },
+      data:[
+        [4,3,4,3],
+        [1,-1,1,-1]
+      ]
+  });
+}, 4000);
+
+</script>
+
+</body>
+</html>
