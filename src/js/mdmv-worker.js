@@ -260,5 +260,5 @@ onmessage = function(e) {
         e.data.header, e.data.data, e.data.vscale,
         e.data.canvasBound, e.data.mapBounds
     )
-    postMessage({ columns: columns });
-};
+    postMessage({ columns: columns })
+}

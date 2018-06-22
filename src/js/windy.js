@@ -52,8 +52,10 @@ class Windy extends MDMV {
 			height: height
 		}
 
-		// -1: stop, 0: waiting data, 1: running
+		// -1: stop, 0: waiting field ready, 1: running
 		this.running_flag = -1
+		this.data_lock = 0
+		this._timer_prepare_columns = null
 		this._timer_prepare_animate = null
 		this._animationLoop = null
 
@@ -61,6 +63,7 @@ class Windy extends MDMV {
 			var self = this
 			self.worker = new Worker(options.worker_uri);
 			self.worker.onmessage = function (e) {
+				self.data_lock = 0
 				let columns = e.data.columns
 				let field = Windy.createField(columns, self.canvasBound)
 				if (self.field) {
@@ -73,28 +76,43 @@ class Windy extends MDMV {
 
 	setData(gridData) {
 		var self = this
-		self.gridData = gridData
-
-		if (self.worker) {
-			self.worker.postMessage({
-				header: gridData.header,
-				data: gridData.data,
-				vscale: self.VELOCITY_SCALE,
-				canvasBound: self.canvasBound,
-				mapBounds: self.mapBounds
-			});
+		if (gridData.header && gridData.data) {
+			if (self.worker) {
+				(function prepare_columns() {
+					if (self.data_lock == 0) {
+						self.data_lock = 1
+						self.gridData = gridData
+						self.worker.postMessage({
+							header: gridData.header,
+							data: gridData.data,
+							vscale: self.VELOCITY_SCALE,
+							canvasBound: self.canvasBound,
+							mapBounds: self.mapBounds
+						})
+					}
+					else {
+						self._timer_prepare_columns = setTimeout(prepare_columns, 100)
+					}
+				})();
+			}
+			else {
+				self.gridData = gridData
+				let columns = Windy.buildFieldColumns(
+					gridData.header, gridData.data, self.VELOCITY_SCALE,
+					self.canvasBound, self.mapBounds
+				)
+				let field = Windy.createField(columns, self.canvasBound)
+				if (self.field) {
+					self.field = self.field.release()
+				}
+				self.field = field
+			}
 		}
 		else {
-			let columns = Windy.buildFieldColumns(
-				gridData.header, gridData.data, self.VELOCITY_SCALE,
-				self.canvasBound, self.mapBounds
-			)
-
-			let field = Windy.createField(columns, self.canvasBound)
+			self.gridData = gridData
 			if (self.field) {
 				self.field = self.field.release()
 			}
-			self.field = field
 		}
 		return self
 	}
@@ -130,12 +148,17 @@ class Windy extends MDMV {
 		for (var i = 0; i < particleCount; i++) {
 			particles.push(self.field.randomize({age: Math.floor(Math.random() * self.MAX_PARTICLE_AGE) + 0}))
 		}
+		var over_part_count = 0
 
 		function evolve() {
 			buckets.forEach(function(bucket) { bucket.length = 0 })
 			particles.forEach(function(particle) {
 				if (particle.age > self.MAX_PARTICLE_AGE) {
 					self.field.randomize(particle).age = 0
+					over_part_count ++
+					if (over_part_count >= particleCount) {
+						over_part_count = 0
+					}
 				}
 				var x = particle.x
 				var y = particle.y
@@ -242,6 +265,10 @@ class Windy extends MDMV {
 
 	release() {
 		this.stop()
+		if (this._timer_prepare_columns) {
+			clearTimeout(this._timer_prepare_columns)
+			this._timer_prepare_columns = null
+		}
 		if (this.field) {
 			this.field = this.field.release()
 		}
